@@ -82,29 +82,17 @@
         mesh.position.z = camera.position.z
         mesh.position.x = camera.position.x
         console.log(mesh.parent)
-        /*var bspA = CSG.fromGeometry(data);
-        var bspB = CSG.fromMesh(Mass);
-        var result = bspA['subtract'](bspB);
-        var res = CSG.toMesh(result, data.matrix);
-        res.material = mkMat('grey');
-        res.castShadow = res.receiveShadow = true;*/
-        scene.add(mesh);
-        //splitGetA(mesh);
+        //scene.add(mesh);
+        scene.add(splitGetA(mesh));
     })
 
-    //console.log(bGeometry);
-    //let free = new THREE.Geometry().fromBufferGeometry(buffered);
-    //let mesh = new THREE.Mesh(free, mkMat);
-
     for(var i=0;i<8;i++)mkLight()
-    //let box = new THREE.Mesh(new THREE.BoxGeometry(2,2,2),mkMat('grey'))
     let box = new THREE.Mesh(new THREE.SphereGeometry(1.2,8,8),mkMat('grey'))
     let Mass = new THREE.Mesh(new THREE.BoxGeometry(800,0.5,800),mkMat('grey'))
     Mass.position.y = 100;
     box.position.x = 0;
     scene.add(box)
     let sphere = new THREE.Mesh(new THREE.SphereGeometry(1.2,8,8),mkMat('grey'))
-    //scene.add(sphere)
 
     function doCSG(a,b,op,mat,ax,ay,az,bx,by,bz){
         var bspA = CSG.fromMesh( a );
@@ -135,11 +123,7 @@
         box.updateMatrix();
         sphere.updateMatrix();
 
-        //results.push(box);
-        //results.push(splitGetA(box));
         results.push(splitGetB(box,1.5,1,0,3,2));
-        //results.push(Mass)
-        //results.push(splitGetCut(box,1.5,1,0,3,2));
         
 
         for(var i=0;i<results.length;i++){
@@ -147,9 +131,7 @@
             scene.add(r)
 
             r.position.z = 5 + i*5
-            //r.position.x = -5 + (((i/3)|0)*10)
         }
-        //scene.add(buffered)
     }
 
     function animate(time){
@@ -167,12 +149,6 @@
     }
 
     function splitGetA(objMesh) {
-        if(objMesh.geometry.type === 'Geometry'){
-            console.log('Classic geom')
-        }else if(objMesh.geometry.type == 'BufferGeometry'){
-            console.log('Buffer geom')
-            //var geom = objMesh.fromBufferGeometry(objMesh);
-        }
         //get objMesh bounding
         objMesh.geometry.computeBoundingBox();
         let bounding = objMesh.geometry.boundingBox.clone();
@@ -210,30 +186,6 @@
         //console.log(cut.index);
         cut.position.y = startY;
         return doCSG(objMesh,cut,'subtract', mkMat('green'), 0,0,0,startX,startY,0);
-    }
-
-    function splitGetCut(objMesh, objWidth, posx1, posy1, posx2, posy2){
-        objMesh.position.x = 0;
-        objMesh.position.y = 0;
-        var startX, startY;
-        if(posx1 < posx2){
-            startX = posx1;
-        }
-        else{
-            startX = posx2;
-        }
-        if(posy1<posy2){
-            startY = posy1;
-        }
-        else{
-            startY = posy2;
-        }
-        //(sířka, výška, délka)
-        let cut = new THREE.Mesh(new THREE.BoxGeometry(objWidth,20,20),mkMat('grey'))
-        //console.log(cut.index);
-        
-        cut.position.y = startY;
-        return cut;
     }
 
     renderer.setAnimationLoop(animate) 
